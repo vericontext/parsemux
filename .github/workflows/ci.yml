@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv pip install --system ".[pymupdf,kreuzberg,api,cli,mcp,vlm,dev]"
+
+      - name: Check version consistency
+        run: sh scripts/check-version.sh
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Build check (Next.js)
+        working-directory: web
+        run: |
+          npm ci
+          npm run build

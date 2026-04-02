@@ -28,6 +28,7 @@ class HealthResponse(BaseModel):
 
 @router.get("/health")
 async def health() -> HealthResponse:
+    from parsemux import __version__
     from parsemux.core.config import settings
 
     infos = list_parser_info()
@@ -41,7 +42,7 @@ async def health() -> HealthResponse:
         }
     return HealthResponse(
         status="ok",
-        version="0.1.0",
+        version=__version__,
         mode=settings.mode,
         parsers_available=available,
         has_server_key=bool(settings.vlm_api_key),

@@ -26,6 +26,5 @@ web/node_modules/
 web/.vercel/
 refs/
 .playwright-mcp/
-.github/
 .vercel
 web/out/

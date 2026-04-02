@@ -71,10 +71,12 @@ def create_app(with_ui: bool = False) -> FastAPI:
         else:
             yield
 
+    from parsemux import __version__
+
     app = FastAPI(
         title="Parsemux",
         description="Document parser orchestrator — auto-routes to the optimal OSS parser",
-        version="0.1.0",
+        version=__version__,
         lifespan=lifespan,
     )
 
