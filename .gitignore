@@ -18,6 +18,7 @@ uploads/
 .claude/
 .vercel/
 INTERNAL.md
+milestones/
 node_modules/
 .next/
 web/.next/
