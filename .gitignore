@@ -16,6 +16,8 @@ venv/
 uploads/
 .kreuzberg/
 .claude/
+.vercel/
+INTERNAL.md
 node_modules/
 .next/
 web/.next/
