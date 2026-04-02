@@ -33,6 +33,9 @@ export function CostPanel({ cost }: { cost: CostEstimate }) {
           <CostBar key={name} name={name} cost={value} maxCost={maxCost} />
         ))}
       </div>
+      <p className="text-[9px] text-muted-foreground/60 text-right">
+        Cloud pricing as of Apr 2026
+      </p>
     </div>
   );
 }

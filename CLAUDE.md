@@ -85,6 +85,7 @@ Semver (`MAJOR.MINOR.PATCH`). Version lives in two files — both must match:
 ## Do not
 
 - Do not hardcode VLM model names in Python — update `vlm_models.yaml` instead
+- When updating cloud pricing in `core/scoring.py`, also update the date in `web/src/components/cost-panel.tsx`
 - Do not add auth to demo mode — it's intentionally open (rate-limited)
 - Do not store API keys in config or git — `.env` is gitignored
 - Do not install Gradio on Fly.io — frontend is on Vercel
