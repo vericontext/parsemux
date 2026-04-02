@@ -15,7 +15,8 @@ venv/
 *.so
 uploads/
 .kreuzberg/
-.claude/
+# Claude Code auto memory (local only, not settings)
+.claude/projects/
 .vercel/
 INTERNAL.md
 milestones/
