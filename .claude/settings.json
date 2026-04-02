@@ -5,10 +5,18 @@
     "vercel@claude-plugins-official": true
   },
   "hooks": {
-    "PreCommit": [
+    "PreToolUse": [
       {
-        "command": "sh scripts/check-version.sh",
-        "description": "Check version consistency"
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/scripts/check-version.sh\"",
+            "timeout": 10,
+            "statusMessage": "Checking version consistency..."
+          }
+        ]
       }
     ]
   }
