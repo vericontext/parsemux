@@ -21,7 +21,6 @@ primary_region = 'iad'  # US East (Virginia) — main target audience
   min_machines_running = 1
 
 [[vm]]
-  memory = '1gb'
+  memory = '2gb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 1024
