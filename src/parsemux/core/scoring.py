@@ -6,12 +6,19 @@ import re
 
 from parsemux.core.models import CostEstimate, ParseResult
 
-# Cloud pricing per 1,000 pages (USD)
+# Cloud pricing per 1,000 pages (USD) — OCR/text extraction tier
+# Sources (verified 2026-04):
+#   AWS Textract: aws.amazon.com/textract/pricing ($1.50/1K for Read)
+#   Google Doc AI: cloud.google.com/document-ai/pricing ($1.50/1K Enterprise OCR)
+#   Azure Doc Intel: azure.microsoft.com/pricing/details/document-intelligence ($1.50/1K Read)
+#   LlamaParse: llamaindex.ai/pricing ($1.25/1K credits, 1 credit/page basic mode)
+#   Reducto: reducto.ai/pricing ($0.015/page = $15/1K)
+#   Mistral OCR: mistral.ai/pricing ($2/1K standard, $1/1K batch)
 CLOUD_PRICING = {
     "AWS Textract": 1.50,
     "Google Document AI": 1.50,
     "Azure Doc Intelligence": 1.50,
-    "Reducto": 2.00,
+    "Reducto": 15.00,
     "LlamaParse": 1.25,
     "Mistral OCR": 2.00,
 }
