@@ -165,9 +165,31 @@ export function ParseWorkspace() {
             Parse any document.{" "}
             <span className="text-amber">Instantly.</span>
           </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Auto-routes to the optimal open-source parser. No signup required.
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-5">
+            Auto-routes to the optimal open-source parser. PDF, DOCX, XLSX, HTML, and 91+ formats. No signup.
           </p>
+
+          {/* Install command */}
+          <div className="max-w-lg mx-auto mb-2">
+            <div
+              className="flex items-center gap-2 bg-muted/50 border border-border rounded-lg px-4 py-2.5 font-mono text-sm cursor-pointer hover:bg-muted transition-colors group"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  "curl -fsSL https://raw.githubusercontent.com/vericontext/parsemux/main/install.sh | sh"
+                );
+              }}
+              title="Click to copy"
+            >
+              <span className="text-muted-foreground select-none">$</span>
+              <span className="flex-1 text-left truncate">
+                curl -fsSL https://raw.githubusercontent.com/vericontext/parsemux/main/install.sh | sh
+              </span>
+              <Copy className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground shrink-0" />
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-1.5">
+              Or try it right here — drop a file below
+            </p>
+          </div>
         </div>
       )}
 
