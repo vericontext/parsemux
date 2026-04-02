@@ -15,7 +15,7 @@ COPY pyproject.toml README.md ./
 COPY src/ src/
 
 # API-only install for production (no Gradio UI — frontend is on Vercel)
-ARG PARSEMUX_EXTRAS="pymupdf,kreuzberg,api,cli,vlm,mcp"
+ARG PARSEMUX_EXTRAS="pymupdf,kreuzberg,docling,api,cli,vlm,mcp"
 RUN uv pip install --system ".[${PARSEMUX_EXTRAS}]"
 
 EXPOSE 8000

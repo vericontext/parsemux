@@ -55,7 +55,7 @@ def test_parse_pdf(client: TestClient, pdf_bytes: bytes):
     assert resp.status_code == 200
     data = resp.json()
     assert "API test document" in data["content"]
-    assert data["parser_used"] == "pymupdf"
+    assert data["parser_used"] in ("pymupdf", "docling")  # depends on installed parsers
     assert data["cost_estimate"] is not None
 
 

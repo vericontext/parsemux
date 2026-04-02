@@ -59,7 +59,7 @@ def test_unavailable_parser_raises():
     request = ParseRequest(
         file_path="/tmp/test.pdf",
         file_name="test.pdf",
-        parser=ParserBackend.DOCLING,
+        parser=ParserBackend.MINERU,  # MinerU is not installed
     )
     with pytest.raises(RuntimeError, match="not available"):
         select_parser(request)

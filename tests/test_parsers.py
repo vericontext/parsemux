@@ -61,10 +61,23 @@ def test_kreuzberg_available():
     assert KreuzbergParser.is_available() is True
 
 
-def test_docling_not_available():
+def test_docling_available():
     from parsemux.parsers.docling import DoclingParser
 
-    assert DoclingParser.is_available() is False
+    assert DoclingParser.is_available() is True
+
+
+@pytest.mark.asyncio
+async def test_docling_parse(sample_pdf: Path):
+    from parsemux.parsers.docling import DoclingParser
+
+    parser = DoclingParser()
+    request = ParseRequest(file_path=str(sample_pdf), file_name="test.pdf")
+    result = await parser.parse(request)
+
+    assert result.parser_used == ParserBackend.DOCLING
+    assert len(result.content) > 0
+    assert result.elapsed_ms >= 0
 
 
 @pytest.mark.asyncio
