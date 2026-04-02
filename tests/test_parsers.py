@@ -61,12 +61,22 @@ def test_kreuzberg_available():
     assert KreuzbergParser.is_available() is True
 
 
+def _docling_installed() -> bool:
+    try:
+        from docling.document_converter import DocumentConverter  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+@pytest.mark.skipif(not _docling_installed(), reason="docling not installed")
 def test_docling_available():
     from parsemux.parsers.docling import DoclingParser
 
     assert DoclingParser.is_available() is True
 
 
+@pytest.mark.skipif(not _docling_installed(), reason="docling not installed")
 @pytest.mark.asyncio
 async def test_docling_parse(sample_pdf: Path):
     from parsemux.parsers.docling import DoclingParser
