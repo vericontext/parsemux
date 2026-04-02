@@ -67,6 +67,21 @@ pytest -q          # 33 tests, all should pass
 - BYOK: keys never stored server-side, never logged
 - Images: embedded as base64 in markdown content + separate `images[]` in ParseResult
 
+## Versioning
+
+Semver (`MAJOR.MINOR.PATCH`). Version lives in two files — both must match:
+- `pyproject.toml` → `version = "X.Y.Z"`
+- `src/parsemux/__init__.py` → `__version__ = "X.Y.Z"`
+
+`scripts/check-version.sh` verifies consistency. Claude Code hook runs it before `git commit`.
+
+**When to bump:**
+- **PATCH** (0.2.0 → 0.2.1): bug fix, docs, refactor, dependency update
+- **MINOR** (0.2 → 0.3): new feature, new CLI command, new parser, new API endpoint
+- **MAJOR** (0.x → 1.0): stable public API, PyPI publish, breaking changes
+
+**Rule: bump version in the same commit as the feature, not after.**
+
 ## Do not
 
 - Do not hardcode VLM model names in Python — update `vlm_models.yaml` instead
