@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "parsemux": {
+      "command": "parsemux",
+      "args": ["mcp"],
+      "env": {}
+    }
+  }
+}
