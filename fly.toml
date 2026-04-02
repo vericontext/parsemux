@@ -4,7 +4,7 @@
 #
 
 app = 'parsemux-api'
-primary_region = 'nrt'
+primary_region = 'iad'  # US East (Virginia) — main target audience
 
 [build]
 
