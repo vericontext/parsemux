@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from parsemux.core.models import ParserBackend, ParseRequest
-from parsemux.core.router import select_parser, _detect_mime, _is_digital_pdf
+from parsemux.core.router import _detect_mime, _is_digital_pdf, select_parser, validate_supported_file_type
 
 
 def test_auto_route_digital_pdf(sample_pdf: Path):
@@ -63,3 +63,10 @@ def test_unavailable_parser_raises():
     )
     with pytest.raises(RuntimeError, match="not available"):
         select_parser(request)
+
+
+def test_validate_supported_file_type_rejects_unknown_extension():
+    request = ParseRequest(file_path="/tmp/archive.zip", file_name="archive.zip")
+
+    with pytest.raises(ValueError, match=r"Unsupported file type '.zip'"):
+        validate_supported_file_type(request)

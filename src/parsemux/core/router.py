@@ -8,6 +8,30 @@ from pathlib import Path
 from parsemux.core.models import ParserBackend, ParseRequest
 from parsemux.core.registry import get_available_parsers
 
+SUPPORTED_EXTENSIONS: dict[str, str] = {
+    ".pdf": "application/pdf",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ".doc": "application/msword",
+    ".xls": "application/vnd.ms-excel",
+    ".ppt": "application/vnd.ms-powerpoint",
+    ".html": "text/html",
+    ".htm": "text/html",
+    ".txt": "text/plain",
+    ".csv": "text/csv",
+    ".md": "text/markdown",
+    ".rtf": "application/rtf",
+    ".epub": "application/epub+zip",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".tiff": "image/tiff",
+    ".tif": "image/tiff",
+    ".webp": "image/webp",
+    ".bmp": "image/bmp",
+}
+
 
 def select_parser(request: ParseRequest) -> ParserBackend:
     """Select the best available parser for the given request."""
@@ -15,6 +39,8 @@ def select_parser(request: ParseRequest) -> ParserBackend:
 
     if not available:
         raise RuntimeError("No parsers are available. Install at least one parser backend.")
+
+    validate_supported_file_type(request)
 
     # 1. User explicitly chose a parser
     if request.parser is not None:
@@ -57,28 +83,25 @@ def select_parser(request: ParseRequest) -> ParserBackend:
     return next(iter(available))
 
 
+def validate_supported_file_type(request: ParseRequest) -> None:
+    """Raise a helpful error for unsupported file extensions."""
+    filename = request.file_name or (request.file_path or "")
+    suffix = Path(filename).suffix.lower()
+
+    if not suffix or suffix in SUPPORTED_EXTENSIONS:
+        return
+
+    supported = ", ".join(ext.lstrip(".").upper() for ext in SUPPORTED_EXTENSIONS)
+    raise ValueError(
+        f"Unsupported file type '{suffix}'. Supported: {supported}."
+    )
+
+
 def _detect_mime(request: ParseRequest) -> str:
     """Detect MIME type from file path or name."""
     filename = request.file_name or (request.file_path or "")
     suffix = Path(filename).suffix.lower()
-    ext_map = {
-        ".pdf": "application/pdf",
-        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ".doc": "application/msword",
-        ".html": "text/html",
-        ".htm": "text/html",
-        ".txt": "text/plain",
-        ".csv": "text/csv",
-        ".md": "text/markdown",
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".tiff": "image/tiff",
-        ".tif": "image/tiff",
-    }
-    return ext_map.get(suffix, "application/octet-stream")
+    return SUPPORTED_EXTENSIONS.get(suffix, "application/octet-stream")
 
 
 def _is_digital_pdf(request: ParseRequest) -> bool:
