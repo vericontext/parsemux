@@ -1,4 +1,12 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+function getApiBase(): string {
+  // Build-time env var (set in Vercel .env.production)
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl) return envUrl;
+  // Runtime: use same origin (for parsemux serve --ui)
+  if (typeof window !== "undefined") return window.location.origin;
+  return "http://localhost:8000";
+}
+const API_BASE = getApiBase();
 
 export interface ExtractedImage {
   data_b64: string;

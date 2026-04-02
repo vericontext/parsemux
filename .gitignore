@@ -28,3 +28,4 @@ refs/
 .playwright-mcp/
 .github/
 .vercel
+web/out/

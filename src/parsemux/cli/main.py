@@ -278,15 +278,17 @@ def schema(
 def serve(
     host: str = typer.Option("0.0.0.0", "--host", help="Bind host"),
     port: int = typer.Option(8000, "--port", help="API port"),
-    ui: bool = typer.Option(False, "--ui", help="Also launch Gradio UI"),
+    ui: bool = typer.Option(False, "--ui", help="Serve Next.js Web UI"),
 ) -> None:
     """Start the REST API server (and optionally the Web UI). MCP remote is always available at /mcp."""
     import uvicorn
 
     from parsemux.api.app import create_app
 
-    app = create_app(with_ui=ui)
-    uvicorn.run(app, host=host, port=port)
+    fastapi_app = create_app(with_ui=ui)
+    # Use the MCP-wrapped ASGI app if available
+    asgi_app = getattr(fastapi_app, "_final_app", fastapi_app)
+    uvicorn.run(asgi_app, host=host, port=port)
 
 
 @app.command()
