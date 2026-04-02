@@ -23,6 +23,33 @@ app = typer.Typer(
 _MAX_FILE_SIZE = 200 * 1024 * 1024  # 200 MB
 
 
+def _print_version() -> None:
+    """Print the installed parsemux version."""
+    from parsemux import __version__
+
+    typer.echo(f"parsemux {__version__}")
+
+
+def _version_callback(value: bool) -> None:
+    """Handle the global --version flag."""
+    if value:
+        _print_version()
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        help="Show the installed parsemux version and exit.",
+        is_eager=True,
+        callback=_version_callback,
+    ),
+) -> None:
+    """Global CLI options."""
+
+
 def _validate_path(path: Path) -> None:
     """Validate file path for safety and existence."""
     # Path traversal check
@@ -311,9 +338,7 @@ def mcp(
 @app.command()
 def version() -> None:
     """Show version."""
-    from parsemux import __version__
-
-    typer.echo(f"parsemux {__version__}")
+    _print_version()
 
 
 if __name__ == "__main__":
