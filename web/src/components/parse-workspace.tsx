@@ -58,15 +58,22 @@ export function ParseWorkspace() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("result");
 
-  // Load parsers, health, and stored BYOK key
+  // Load parsers, health, and stored BYOK key (retry for Fly.io cold start)
   useEffect(() => {
-    fetchParsers().then(setParsers).catch(() => {});
-    fetchHealth()
-      .then((h) => {
-        setHasServerKey(h.has_server_key);
-        setLimits(h.limits);
-      })
-      .catch(() => {});
+    let attempts = 0;
+    const tryLoad = () => {
+      fetchParsers().then(setParsers).catch(() => {});
+      fetchHealth()
+        .then((h) => {
+          setHasServerKey(h.has_server_key);
+          setLimits(h.limits);
+        })
+        .catch(() => {
+          attempts++;
+          if (attempts < 3) setTimeout(tryLoad, 2000);
+        });
+    };
+    tryLoad();
     const stored = localStorage.getItem("parsemux-llm-key");
     if (stored) setLlmKey(stored);
   }, []);

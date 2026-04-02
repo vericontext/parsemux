@@ -4,7 +4,7 @@ import { useTheme } from "@/components/theme-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { fetchHealth } from "@/lib/api";
-import { Moon, Sun, Zap, GitBranch, Star } from "lucide-react";
+import { Moon, Sun, Zap, GitBranch, Star, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface HealthState {
@@ -17,18 +17,28 @@ interface HealthState {
 export function Header() {
   const { theme, toggle } = useTheme();
   const [health, setHealth] = useState<HealthState | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchHealth()
-      .then((h) =>
-        setHealth({
-          version: h.version,
-          parsers: h.parsers_available,
-          mode: h.mode,
-          limits: h.limits,
+    let attempts = 0;
+    const tryHealth = () => {
+      fetchHealth()
+        .then((h) => {
+          setHealth({
+            version: h.version,
+            parsers: h.parsers_available,
+            mode: h.mode,
+            limits: h.limits,
+          });
+          setLoading(false);
         })
-      )
-      .catch(() => setHealth(null));
+        .catch(() => {
+          attempts++;
+          if (attempts < 3) setTimeout(tryHealth, 2000);
+          else { setHealth(null); setLoading(false); }
+        });
+    };
+    tryHealth();
   }, []);
 
   return (
@@ -59,7 +69,13 @@ export function Header() {
               Demo
             </Badge>
           )}
-          {!health && (
+          {!health && loading && (
+            <Badge variant="secondary" className="font-mono text-xs hidden sm:inline-flex gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Connecting...
+            </Badge>
+          )}
+          {!health && !loading && (
             <Badge variant="destructive" className="font-mono text-xs hidden sm:inline-flex">
               API offline
             </Badge>
