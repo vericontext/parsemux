@@ -22,6 +22,11 @@ DEFAULT_PROMPT = (
 
 _YAML_PATH = Path(__file__).parent / "vlm_models.yaml"
 
+# Defaults (override via vlm_models.yaml)
+VLM_TIMEOUT = 30       # seconds for cloud providers
+VLM_TIMEOUT_LOCAL = 60  # seconds for local (Ollama)
+VLM_MAX_TOKENS = 300    # max response tokens
+
 
 @lru_cache(maxsize=1)
 def _load_registry() -> dict[str, Any]:
@@ -76,9 +81,10 @@ class OpenAIVLMProvider(BaseVLMProvider):
 
     async def describe_image(self, image_b64: str, format: str) -> str:
         media_type = f"image/{format}"
-        async with httpx.AsyncClient(timeout=30) as client:
+        api_base = get_provider_config("openai")["api_base"]
+        async with httpx.AsyncClient(timeout=VLM_TIMEOUT) as client:
             resp = await client.post(
-                "https://api.openai.com/v1/chat/completions",
+                api_base,
                 headers={"Authorization": f"Bearer {self.api_key}"},
                 json={
                     "model": self.model,
@@ -97,7 +103,7 @@ class OpenAIVLMProvider(BaseVLMProvider):
                             ],
                         }
                     ],
-                    "max_completion_tokens": 300,
+                    "max_completion_tokens": VLM_MAX_TOKENS,
                 },
             )
             resp.raise_for_status()
@@ -109,9 +115,10 @@ class AnthropicVLMProvider(BaseVLMProvider):
 
     async def describe_image(self, image_b64: str, format: str) -> str:
         media_type = f"image/{format}"
-        async with httpx.AsyncClient(timeout=30) as client:
+        api_base = get_provider_config("anthropic")["api_base"]
+        async with httpx.AsyncClient(timeout=VLM_TIMEOUT) as client:
             resp = await client.post(
-                "https://api.anthropic.com/v1/messages",
+                api_base,
                 headers={
                     "x-api-key": self.api_key,
                     "anthropic-version": "2023-06-01",
@@ -119,7 +126,7 @@ class AnthropicVLMProvider(BaseVLMProvider):
                 },
                 json={
                     "model": self.model,
-                    "max_tokens": 300,
+                    "max_tokens": VLM_MAX_TOKENS,
                     "messages": [
                         {
                             "role": "user",
@@ -149,7 +156,7 @@ class GoogleVLMProvider(BaseVLMProvider):
         mime = f"image/{format}"
         cfg = get_provider_config("google")
         base = cfg["api_base"]
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=VLM_TIMEOUT) as client:
             resp = await client.post(
                 f"{base}/{self.model}:generateContent",
                 params={"key": self.api_key},
@@ -182,7 +189,7 @@ class OllamaVLMProvider(BaseVLMProvider):
         self.base_url = cfg["api_base"].rsplit("/api/generate", 1)[0]
 
     async def describe_image(self, image_b64: str, format: str) -> str:
-        async with httpx.AsyncClient(timeout=60) as client:
+        async with httpx.AsyncClient(timeout=VLM_TIMEOUT_LOCAL) as client:
             resp = await client.post(
                 f"{self.base_url}/api/generate",
                 json={
