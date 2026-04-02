@@ -216,8 +216,15 @@ def detect(
 @app.command()
 def schema(
     command: Optional[str] = typer.Argument(None, help="Command name (omit for all)"),
+    output_schema: bool = typer.Option(False, "--output-schema", help="Print the ParseResult JSON Schema"),
 ) -> None:
     """Show machine-readable schema for CLI commands (for AI agents)."""
+    if output_schema:
+        from parsemux.core.models import ParseResult
+
+        typer.echo(json.dumps(ParseResult.model_json_schema(), indent=2))
+        return
+
     schemas = {
         "parse": {
             "description": "Parse a document and extract structured content",
