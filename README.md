@@ -52,6 +52,18 @@ parsemux parse doc.pdf --extract-images --describe-images --vlm-key sk-...
 Provider is auto-detected from key prefix (`sk-` → OpenAI, `sk-ant-` → Anthropic, `AI` → Google).
 Default models: gpt-5.4-nano, claude-haiku-4.5, gemini-2.5-flash, qwen2.5vl:7b (local).
 
+### Ollama local VLM
+
+For free local image description, install Ollama and pull the default local vision model:
+
+```bash
+ollama pull qwen2.5vl:7b
+parsemux parse doc.pdf --extract-images --describe-images
+```
+
+When no VLM key is provided, parsemux falls back to Ollama automatically.
+See [docs/ollama-guide.md](docs/ollama-guide.md) for setup details and performance notes.
+
 ### Start your own server
 
 ```bash
