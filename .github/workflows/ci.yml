@@ -19,15 +19,21 @@ jobs:
         run: uv python install 3.12
 
       - name: Install dependencies
-        run: uv pip install --system ".[pymupdf,kreuzberg,api,cli,mcp,vlm,dev]"
+        run: |
+          uv venv
+          uv pip install ".[pymupdf,kreuzberg,api,cli,mcp,vlm,dev]"
 
       - name: Check version consistency
-        run: sh scripts/check-version.sh
+        run: |
+          . .venv/bin/activate
+          sh scripts/check-version.sh
 
       - name: Run tests
-        run: pytest -q
+        run: |
+          . .venv/bin/activate
+          pytest -q
 
-      - name: Build check (Next.js)
+      - name: Build Next.js
         working-directory: web
         run: |
           npm ci
