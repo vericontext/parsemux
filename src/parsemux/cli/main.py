@@ -53,6 +53,12 @@ def _validate_path(path: Path) -> None:
         raise typer.Exit(1)
 
 
+def _handle_cli_error(error: Exception) -> None:
+    """Render a concise CLI error and exit."""
+    typer.echo(f"Error: {error}", err=True)
+    raise typer.Exit(1)
+
+
 @app.command()
 def parse(
     path: str = typer.Argument(help="File path or directory to parse"),
@@ -72,27 +78,41 @@ def parse(
     p = Path(path)
     _validate_path(p)
 
-    if dry_run:
-        _dry_run(p, parser)
-        return
+    try:
+        if dry_run:
+            _dry_run(p, parser)
+            return
 
-    if batch and p.is_dir():
-        files = [f for f in p.iterdir() if f.is_file() and not f.name.startswith(".")]
-        if not files:
-            typer.echo(json.dumps({"error": "No files found in directory"}), err=True)
-            raise typer.Exit(1)
-        for f in sorted(files):
-            typer.echo(f"--- {f.name} ---")
-            _parse_single(f, parser, format, use_llm, llm_key, extract_images, describe_images, vlm_provider, vlm_key, output=None)
-            typer.echo()
-        return
+        if batch and p.is_dir():
+            files = [f for f in p.iterdir() if f.is_file() and not f.name.startswith(".")]
+            if not files:
+                typer.echo(json.dumps({"error": "No files found in directory"}), err=True)
+                raise typer.Exit(1)
+            for f in sorted(files):
+                typer.echo(f"--- {f.name} ---")
+                _parse_single(
+                    f,
+                    parser,
+                    format,
+                    use_llm,
+                    llm_key,
+                    extract_images,
+                    describe_images,
+                    vlm_provider,
+                    vlm_key,
+                    output=None,
+                )
+                typer.echo()
+            return
 
-    _parse_single(p, parser, format, use_llm, llm_key, extract_images, describe_images, vlm_provider, vlm_key, output)
+        _parse_single(p, parser, format, use_llm, llm_key, extract_images, describe_images, vlm_provider, vlm_key, output)
+    except (RuntimeError, ValueError) as error:
+        _handle_cli_error(error)
 
 
 def _dry_run(path: Path, parser: str | None) -> None:
     """Validate and preview routing without parsing."""
-    from parsemux.core.router import select_parser, _detect_mime, _is_digital_pdf
+    from parsemux.core.router import _detect_mime, _is_digital_pdf, select_parser
 
     request = ParseRequest(
         file_path=str(path),
@@ -199,7 +219,10 @@ def detect(
 
     request = ParseRequest(file_path=str(p), file_name=p.name)
     mime = _detect_mime(request)
-    backend = select_parser(request)
+    try:
+        backend = select_parser(request)
+    except (RuntimeError, ValueError) as error:
+        _handle_cli_error(error)
 
     if output_json:
         typer.echo(json.dumps({
