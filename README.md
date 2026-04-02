@@ -1,8 +1,22 @@
 # Parsemux
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![GitHub stars](https://img.shields.io/github/stars/vericontext/parsemux)](https://github.com/vericontext/parsemux/stargazers)
+
 Document parser orchestrator — auto-routes to the optimal OSS parser for each document.
 
-**[Try the demo](https://parsemux.vercel.app)** | [API Docs](https://parsemux-api.fly.dev/docs)
+**[Try the demo](https://parsemux.com)** | [API Docs](https://parsemux-api.fly.dev/docs) | [GitHub](https://github.com/vericontext/parsemux)
+
+## Why Parsemux?
+
+- **Auto-routing** — detects document type and picks the best parser automatically
+- **5 parsers, 1 interface** — PyMuPDF, Kreuzberg, Docling, MinerU, Marker
+- **Every interface** — CLI, REST API, MCP server, Web UI
+- **Image extraction + VLM description** — BYOK, auto-detects provider from key prefix
+- **Compare mode** — run all parsers on the same doc, pick the best output
+- **Cost comparison** — shows savings vs AWS Textract, Google Document AI, etc.
+- **Zero config** — `pip install parsemux[pymupdf,cli]` and go
 
 ## Install
 
@@ -36,18 +50,12 @@ parsemux parse doc.pdf --extract-images --describe-images --vlm-key sk-...
 ```
 
 Provider is auto-detected from key prefix (`sk-` → OpenAI, `sk-ant-` → Anthropic, `AI` → Google).
-
-Or set in `.env` for local dev:
-
-```bash
-PARSEMUX_VLM_API_KEY=AIza...  # your key here
-```
+Default models: gpt-5.4-nano, claude-haiku-4.5, gemini-2.5-flash, qwen2.5vl:7b (local).
 
 ### Start your own server
 
 ```bash
 parsemux serve                    # REST API at :8000 + MCP at /mcp
-parsemux serve --ui               # + Gradio UI
 ```
 
 ### MCP server
@@ -56,7 +64,7 @@ parsemux serve --ui               # + Gradio UI
 # Local (Claude Desktop, Cursor — stdio transport)
 parsemux mcp
 
-# Remote (Streamable HTTP — for remote MCP clients)
+# Remote (Streamable HTTP)
 parsemux mcp --remote --port 8000
 ```
 
@@ -76,32 +84,29 @@ parsemux mcp --remote --port 8000
 
 ```bash
 parsemux schema                           # machine-readable command schemas
-parsemux schema parse                     # single command schema
-parsemux detect doc.pdf --json            # detect type + recommend parser
-parsemux list-parsers --json              # available parsers
+parsemux parse doc.pdf --dry-run          # preview routing
+parsemux list-parsers --json              # available parsers as JSON
+parsemux detect doc.pdf --json            # MIME + recommended parser
 ```
 
 ## Supported Parsers
 
-| Parser | Install | Best For | Speed |
-|--------|---------|----------|-------|
-| PyMuPDF | `parsemux[pymupdf]` | Digital PDFs | 1,000+ pages/sec |
-| Kreuzberg | `parsemux[kreuzberg]` | 91+ formats, OCR | Rust core |
-| Docling | `parsemux[docling]` | Tables (97.9%) | CPU |
-| MinerU | `parsemux[mineru]` | Scanned docs | GPU recommended |
-| Marker | `parsemux[marker]` | Batch + LLM-enhanced | GPU recommended |
+| Parser | Best For | Speed |
+|--------|----------|-------|
+| **PyMuPDF** | Digital PDFs | 1,000+ pages/sec |
+| **Kreuzberg** | 91+ formats, OCR | Rust core |
+| **Docling** | Tables (97.9%) | CPU |
+| **MinerU** | Scanned docs | GPU |
+| **Marker** | Batch + LLM-enhanced | GPU |
 
-## Cloud Demo vs Local
+## Cloud Demo vs Self-hosted
 
-| | Local (OSS) | Cloud Demo |
+| | Self-hosted | [Demo](https://parsemux.com) |
 |---|---|---|
-| **Install** | `pip install parsemux[...]` | None (browser) |
-| **URL** | `localhost:8000` | [parsemux.vercel.app](https://parsemux.vercel.app) |
-| **File limit** | 100 MB | 10 MB |
-| **Rate limit** | None | 10 req/min |
-| **MCP remote** | Full (`/mcp`) | Disabled |
-| **VLM key** | `.env` or CLI flag | BYOK (enter in UI) |
-| **Cost** | Your infra | Free (limited) |
+| File limit | 100 MB | 10 MB |
+| Rate limit | None | 10 req/min |
+| MCP remote | `/mcp` | Disabled |
+| VLM key | `.env` | BYOK (enter in UI) |
 
 ## Docker
 
@@ -111,18 +116,27 @@ docker compose up
 # MCP: http://localhost:8000/mcp
 ```
 
-## Self-hosting
+## Contributing
 
-```bash
-# Fly.io (recommended)
-fly launch
-fly deploy
+Contributions welcome!
 
-# Set demo mode for public deployment
-fly secrets set PARSEMUX_MODE=demo
-fly secrets set PARSEMUX_CORS_ORIGINS=https://your-domain.com
-```
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feat/my-feature`)
+3. Run tests (`pytest -q`)
+4. Open a PR
+
+See [issues](https://github.com/vericontext/parsemux/issues) for ideas.
+
+## Acknowledgments
+
+Built on the shoulders of these excellent open-source parsers:
+
+- [PyMuPDF](https://github.com/pymupdf/PyMuPDF) — blazing-fast digital PDF parsing
+- [Kreuzberg](https://github.com/Goldziher/kreuzberg) — Rust-powered multi-format + OCR
+- [Docling](https://github.com/DS4SD/docling) — best-in-class table extraction
+- [MinerU](https://github.com/opendatalab/MinerU) — high-quality scanned doc pipeline
+- [Marker](https://github.com/VikParuchuri/marker) — LLM-enhanced batch conversion
 
 ## License
 
-MIT
+[MIT](LICENSE)

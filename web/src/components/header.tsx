@@ -7,13 +7,27 @@ import { fetchHealth } from "@/lib/api";
 import { Moon, Sun, Zap, GitBranch } from "lucide-react";
 import { useEffect, useState } from "react";
 
+interface HealthState {
+  version: string;
+  parsers: number;
+  mode: string;
+  limits: { max_file_size_mb: number; rate_limit_per_min: number; max_pages: number } | null;
+}
+
 export function Header() {
   const { theme, toggle } = useTheme();
-  const [health, setHealth] = useState<{ version: string; parsers: number } | null>(null);
+  const [health, setHealth] = useState<HealthState | null>(null);
 
   useEffect(() => {
     fetchHealth()
-      .then((h) => setHealth({ version: h.version, parsers: h.parsers_available }))
+      .then((h) =>
+        setHealth({
+          version: h.version,
+          parsers: h.parsers_available,
+          mode: h.mode,
+          limits: h.limits,
+        })
+      )
       .catch(() => setHealth(null));
   }, []);
 
@@ -30,6 +44,19 @@ export function Header() {
           {health && (
             <Badge variant="secondary" className="font-mono text-xs hidden sm:inline-flex">
               v{health.version} · {health.parsers} parsers
+            </Badge>
+          )}
+          {health?.mode === "demo" && (
+            <Badge
+              variant="secondary"
+              className="bg-amber/15 text-amber border-amber/30 text-xs hidden sm:inline-flex cursor-default"
+              title={
+                health.limits
+                  ? `${health.limits.max_file_size_mb}MB max · ${health.limits.rate_limit_per_min} req/min · ${health.limits.max_pages} pages max`
+                  : "Demo mode"
+              }
+            >
+              Demo
             </Badge>
           )}
           {!health && (

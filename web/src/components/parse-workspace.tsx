@@ -45,6 +45,11 @@ export function ParseWorkspace() {
   const [vlmProvider, setVlmProvider] = useState("auto");
   const [showByok, setShowByok] = useState(false);
   const [hasServerKey, setHasServerKey] = useState(false);
+  const [limits, setLimits] = useState<{
+    max_file_size_mb: number;
+    rate_limit_per_min: number;
+    max_pages: number;
+  } | null>(null);
 
   const [parsing, setParsing] = useState(false);
   const [comparing, setComparing] = useState(false);
@@ -57,7 +62,10 @@ export function ParseWorkspace() {
   useEffect(() => {
     fetchParsers().then(setParsers).catch(() => {});
     fetchHealth()
-      .then((h) => setHasServerKey(h.has_server_key))
+      .then((h) => {
+        setHasServerKey(h.has_server_key);
+        setLimits(h.limits);
+      })
       .catch(() => {});
     const stored = localStorage.getItem("parsemux-llm-key");
     if (stored) setLlmKey(stored);
@@ -71,12 +79,19 @@ export function ParseWorkspace() {
 
   const onDrop = useCallback((accepted: File[]) => {
     if (accepted.length > 0) {
-      setFile(accepted[0]);
+      const f = accepted[0];
+      if (limits && f.size > limits.max_file_size_mb * 1024 * 1024) {
+        setError(
+          `File too large for demo (${limits.max_file_size_mb}MB limit). Install locally for up to 100MB.`
+        );
+        return;
+      }
+      setFile(f);
       setResult(null);
       setCompareResults([]);
       setError(null);
     }
-  }, []);
+  }, [limits]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -206,6 +221,14 @@ export function ParseWorkspace() {
               </div>
             )}
           </div>
+          {limits && (
+            <p className={`text-[11px] text-muted-foreground text-center mt-1.5 ${hasResult || hasCompare ? "" : "max-w-2xl mx-auto lg:max-w-none"}`}>
+              Demo: {limits.max_file_size_mb}MB max · {limits.rate_limit_per_min} req/min ·{" "}
+              <a href="https://github.com/vericontext/parsemux#install" className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">
+                Install locally
+              </a>{" "}for full access
+            </p>
+          )}
 
           {/* Parser selector */}
           <div className={`space-y-3 ${hasResult || hasCompare ? "" : "max-w-2xl mx-auto lg:max-w-none"}`}>
