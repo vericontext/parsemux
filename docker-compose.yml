@@ -1,0 +1,34 @@
+services:
+  parsemux:
+    build:
+      context: .
+      args:
+        PARSEMUX_EXTRAS: "pymupdf,kreuzberg,serve,cli"
+    ports:
+      - "8000:8000"
+      - "7860:7860"
+    environment:
+      - PARSEMUX_HOST=0.0.0.0
+      - PARSEMUX_PORT=8000
+    volumes:
+      - uploads:/tmp/parsemux_uploads
+
+  # Full profile with all parsers (heavy, needs GPU for some)
+  parsemux-full:
+    build:
+      context: .
+      args:
+        PARSEMUX_EXTRAS: "full"
+    ports:
+      - "8001:8000"
+      - "7861:7860"
+    environment:
+      - PARSEMUX_HOST=0.0.0.0
+      - PARSEMUX_PORT=8000
+    volumes:
+      - uploads:/tmp/parsemux_uploads
+    profiles:
+      - full
+
+volumes:
+  uploads:

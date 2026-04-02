@@ -1,0 +1,98 @@
+# VLM Provider & Model Registry (SSOT)
+# Update this file when models change. Code reads from here.
+# Last updated: 2026-04-02
+
+providers:
+  openai:
+    default_model: gpt-5.4-nano
+    api_base: https://api.openai.com/v1/chat/completions
+    key_prefixes: ["sk-"]
+    cost_per_image_usd: 0.0001  # ~500 tokens at $0.20/1M input
+    models:
+      gpt-5.4-nano:
+        description: "Cheapest GPT-5.4-class, vision support. Released 2026-03."
+        input_price_per_1m: 0.20
+        output_price_per_1m: 1.25
+        context_window: 400000
+        vision: true
+      gpt-5.4-mini:
+        description: "GPT-5.4-class, faster/better than nano. Released 2026-03."
+        input_price_per_1m: 0.75
+        output_price_per_1m: 4.50
+        context_window: 400000
+        vision: true
+      gpt-5.4:
+        description: "Frontier model, best quality. Released 2026-03."
+        input_price_per_1m: 2.50
+        output_price_per_1m: 15.00
+        context_window: 400000
+        vision: true
+
+  anthropic:
+    default_model: claude-haiku-4-5-20251001
+    api_base: https://api.anthropic.com/v1/messages
+    key_prefixes: ["sk-ant-"]
+    cost_per_image_usd: 0.0016  # ~1600 tokens at $1/1M input
+    models:
+      claude-haiku-4-5-20251001:
+        description: "Fast/cheap vision model. Released 2025-10."
+        input_price_per_1m: 1.00
+        output_price_per_1m: 5.00
+        context_window: 200000
+        vision: true
+      claude-sonnet-4-6:
+        description: "Latest Sonnet, strong vision. Released 2026-03."
+        input_price_per_1m: 3.00
+        output_price_per_1m: 15.00
+        context_window: 200000
+        vision: true
+      claude-opus-4-6:
+        description: "Most capable Claude model."
+        input_price_per_1m: 15.00
+        output_price_per_1m: 75.00
+        context_window: 1000000
+        vision: true
+
+  google:
+    default_model: gemini-2.5-flash
+    api_base: https://generativelanguage.googleapis.com/v1beta/models
+    key_prefixes: ["AI"]
+    cost_per_image_usd: 0.00008  # ~260 tokens at $0.30/1M input
+    models:
+      gemini-2.5-flash:
+        description: "Best price-performance multimodal. Released 2025-06. Deprecates 2026-06."
+        input_price_per_1m: 0.30
+        output_price_per_1m: 2.50
+        context_window: 1048576
+        vision: true
+      gemini-2.5-pro:
+        description: "Best quality in 2.5 series. Deprecates 2026-06."
+        input_price_per_1m: 1.25
+        output_price_per_1m: 10.00
+        context_window: 1048576
+        vision: true
+      gemini-3-flash-preview:
+        description: "Latest Gemini with thinking. Preview."
+        input_price_per_1m: 0.50
+        output_price_per_1m: 3.00
+        context_window: 1048576
+        vision: true
+
+  ollama:
+    default_model: "qwen2.5vl:7b"
+    api_base: http://localhost:11434/api/generate
+    key_prefixes: []  # no key needed
+    cost_per_image_usd: 0.0
+    models:
+      "qwen2.5vl:7b":
+        description: "Best document/OCR vision model locally. Released 2025-01."
+        vision: true
+      "llama3.2-vision:11b":
+        description: "General-purpose local vision, strong spatial reasoning."
+        vision: true
+      "minicpm-v":
+        description: "Compact vision model, surpasses GPT-4o-mini on single image."
+        vision: true
+      moondream:
+        description: "Ultra-light (~2B), for constrained hardware."
+        vision: true
