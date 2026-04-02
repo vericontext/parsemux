@@ -442,7 +442,7 @@ export function ParseWorkspace() {
                 {result && (
                   <div className="space-y-4">
                     <div className="border border-border rounded-xl bg-card p-6 min-h-[300px] max-h-[600px] overflow-y-auto">
-                      <ResultView content={result.content} format={outputFormat} />
+                      <ResultView content={result.content} format={outputFormat} result={result} />
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <MetaPanel result={result} />

@@ -2,25 +2,24 @@
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import type { ParseResult } from "@/lib/api";
 
 export function ResultView({
   content,
   format,
+  result,
 }: {
   content: string;
   format: "markdown" | "text" | "json";
+  result?: ParseResult;
 }) {
   if (format === "json") {
-    try {
-      const parsed = JSON.parse(content);
-      return (
-        <pre className="font-mono text-sm whitespace-pre-wrap break-words">
-          {JSON.stringify(parsed, null, 2)}
-        </pre>
-      );
-    } catch {
-      return <pre className="font-mono text-sm whitespace-pre-wrap">{content}</pre>;
-    }
+    const data = result ?? content;
+    return (
+      <pre className="font-mono text-sm whitespace-pre-wrap break-words">
+        {JSON.stringify(data, null, 2)}
+      </pre>
+    );
   }
 
   if (format === "text") {

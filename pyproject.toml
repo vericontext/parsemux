@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "parsemux"
-version = "0.3.0"
+version = "0.3.1"
 description = "Document parser orchestrator — auto-routes to the optimal OSS parser for each document"
 readme = "README.md"
 license = "MIT"
