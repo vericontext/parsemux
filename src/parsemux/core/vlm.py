@@ -97,7 +97,7 @@ class OpenAIVLMProvider(BaseVLMProvider):
                             ],
                         }
                     ],
-                    "max_tokens": 300,
+                    "max_completion_tokens": 300,
                 },
             )
             resp.raise_for_status()

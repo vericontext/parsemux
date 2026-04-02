@@ -11,6 +11,7 @@ primary_region = 'nrt'
 [env]
   PARSEMUX_HOST = '0.0.0.0'
   PARSEMUX_PORT = '8000'
+  PARSEMUX_MODE = 'demo'
 
 [http_service]
   internal_port = 8000

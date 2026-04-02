@@ -19,8 +19,11 @@ router = APIRouter()
 class HealthResponse(BaseModel):
     status: str
     version: str
+    mode: str
     parsers_available: int
     has_server_key: bool = False
+    mcp_remote: bool = False
+    limits: dict | None = None
 
 
 @router.get("/health")
@@ -29,11 +32,21 @@ async def health() -> HealthResponse:
 
     infos = list_parser_info()
     available = sum(1 for i in infos if i.available)
+    limits = None
+    if settings.is_demo:
+        limits = {
+            "max_file_size_mb": settings.demo_max_file_size_mb,
+            "rate_limit_per_min": settings.demo_rate_limit_per_min,
+            "max_pages": settings.demo_max_pages,
+        }
     return HealthResponse(
         status="ok",
         version="0.1.0",
+        mode=settings.mode,
         parsers_available=available,
         has_server_key=bool(settings.vlm_api_key),
+        mcp_remote=not (settings.is_demo and settings.demo_disable_mcp),
+        limits=limits,
     )
 
 

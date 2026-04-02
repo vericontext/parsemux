@@ -41,8 +41,11 @@ export interface ParserInfo {
 export interface HealthResponse {
   status: string;
   version: string;
+  mode: string;
   parsers_available: number;
   has_server_key: boolean;
+  mcp_remote: boolean;
+  limits: { max_file_size_mb: number; rate_limit_per_min: number; max_pages: number } | null;
 }
 
 export async function fetchHealth(): Promise<HealthResponse> {
