@@ -52,6 +52,8 @@ class ParseRequest(BaseModel):
     vlm_provider: VLMProvider | None = None
     vlm_api_key: str | None = Field(default=None, exclude=True)
     max_images: int = 50
+    # OCR
+    use_ocr: bool = True
 
 
 class CostEstimate(BaseModel):

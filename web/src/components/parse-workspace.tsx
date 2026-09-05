@@ -42,6 +42,7 @@ export function ParseWorkspace() {
   const [llmKey, setLlmKey] = useState("");
   const [extractImages, setExtractImages] = useState(false);
   const [describeImages, setDescribeImages] = useState(false);
+  const [useOcr, setUseOcr] = useState(true);
   const [vlmProvider, setVlmProvider] = useState("auto");
   const [showByok, setShowByok] = useState(false);
   const [hasServerKey, setHasServerKey] = useState(false);
@@ -131,6 +132,7 @@ export function ParseWorkspace() {
         llmApiKey: llmKey || undefined,
         extractImages,
         describeImages,
+        useOcr,
         vlmProvider: vlmProvider !== "auto" ? vlmProvider : undefined,
         vlmApiKey: llmKey || undefined,
       });
@@ -305,6 +307,17 @@ export function ParseWorkspace() {
                 ))}
               </div>
             </div>
+
+            {/* OCR */}
+            <label className="flex items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={useOcr}
+                onChange={(e) => setUseOcr(e.target.checked)}
+                className="rounded"
+              />
+              Enable OCR (scanned documents)
+            </label>
 
             {/* Image extraction */}
             <div className="space-y-1.5">

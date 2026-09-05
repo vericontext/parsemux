@@ -1,9 +1,4 @@
 {
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -11,13 +6,18 @@
         "hooks": [
           {
             "type": "command",
-            "if": "Bash(git commit*)",
             "command": "sh \"$CLAUDE_PROJECT_DIR/scripts/check-version.sh\"",
+            "if": "Bash(git commit*)",
             "timeout": 10,
             "statusMessage": "Checking version consistency..."
           }
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true
   }
 }

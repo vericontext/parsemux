@@ -37,6 +37,7 @@ async def parse_document_tool(
     llm_api_key: str | None = None,
     extract_images: bool = False,
     describe_images: bool = False,
+    use_ocr: bool = True,
     vlm_provider: str | None = None,
     vlm_api_key: str | None = None,
 ) -> str:
@@ -53,6 +54,7 @@ async def parse_document_tool(
         llm_api_key: LLM API key for BYOK features.
         extract_images: Extract images from document as base64.
         describe_images: Generate VLM descriptions for extracted images.
+        use_ocr: Enable OCR for scanned/image-based documents (default True, used by Docling).
         vlm_provider: VLM provider (openai, anthropic, google, ollama). Auto-detected from key if omitted.
         vlm_api_key: VLM API key (falls back to llm_api_key).
     """
@@ -67,6 +69,7 @@ async def parse_document_tool(
         llm_api_key=llm_api_key,
         extract_images=extract_images,
         describe_images=describe_images,
+        use_ocr=use_ocr,
         vlm_provider=vlm,
         vlm_api_key=vlm_api_key,
     )

@@ -95,6 +95,7 @@ def parse(
     llm_key: Optional[str] = typer.Option(None, "--llm-key", help="LLM API key for BYOK"),
     extract_images: bool = typer.Option(False, "--extract-images", help="Extract images from document"),
     describe_images: bool = typer.Option(False, "--describe-images", help="Generate VLM descriptions for images"),
+    use_ocr: bool = typer.Option(True, "--use-ocr/--no-ocr", help="Enable OCR for scanned documents"),
     vlm_provider: Optional[str] = typer.Option(None, "--vlm-provider", help="VLM provider: openai, anthropic, google, ollama"),
     vlm_key: Optional[str] = typer.Option(None, "--vlm-key", help="VLM API key (falls back to --llm-key)"),
     output: Optional[str] = typer.Option(None, "--output", "-o", help="Output file path"),
@@ -125,6 +126,7 @@ def parse(
                     llm_key,
                     extract_images,
                     describe_images,
+                    use_ocr,
                     vlm_provider,
                     vlm_key,
                     output=None,
@@ -132,7 +134,7 @@ def parse(
                 typer.echo()
             return
 
-        _parse_single(p, parser, format, use_llm, llm_key, extract_images, describe_images, vlm_provider, vlm_key, output)
+        _parse_single(p, parser, format, use_llm, llm_key, extract_images, describe_images, use_ocr, vlm_provider, vlm_key, output)
     except (RuntimeError, ValueError) as error:
         _handle_cli_error(error)
 
@@ -170,6 +172,7 @@ def _parse_single(
     llm_key: str | None,
     extract_images: bool = False,
     describe_images: bool = False,
+    use_ocr: bool = True,
     vlm_provider: str | None = None,
     vlm_key: str | None = None,
     output: str | None = None,
@@ -187,6 +190,7 @@ def _parse_single(
         llm_api_key=llm_key,
         extract_images=extract_images,
         describe_images=describe_images,
+        use_ocr=use_ocr,
         vlm_provider=vlm,
         vlm_api_key=vlm_key,
     )

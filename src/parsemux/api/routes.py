@@ -64,6 +64,7 @@ async def parse(
     use_llm: bool = Query(False, description="Enable LLM-enhanced parsing"),
     extract_images: bool = Query(False, description="Extract images from document"),
     describe_images: bool = Query(False, description="Generate VLM descriptions for images"),
+    use_ocr: bool = Query(True, description="Enable OCR for scanned documents"),
     vlm_provider: Optional[str] = Query(None, description="VLM provider: openai, anthropic, google, ollama"),
     x_llm_api_key: Optional[str] = Header(None, alias="X-LLM-API-Key"),
     x_vlm_api_key: Optional[str] = Header(None, alias="X-VLM-API-Key"),
@@ -87,6 +88,7 @@ async def parse(
             llm_api_key=x_llm_api_key,
             extract_images=extract_images,
             describe_images=describe_images,
+            use_ocr=use_ocr,
             vlm_provider=vlm,
             vlm_api_key=x_vlm_api_key,
         )

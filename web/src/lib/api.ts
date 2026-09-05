@@ -77,6 +77,7 @@ export async function parseDocument(
     llmApiKey?: string;
     extractImages?: boolean;
     describeImages?: boolean;
+    useOcr?: boolean;
     vlmProvider?: string;
     vlmApiKey?: string;
   } = {}
@@ -87,6 +88,7 @@ export async function parseDocument(
   if (options.useLlm) params.set("use_llm", "true");
   if (options.extractImages) params.set("extract_images", "true");
   if (options.describeImages) params.set("describe_images", "true");
+  if (options.useOcr === false) params.set("use_ocr", "false");
   if (options.vlmProvider) params.set("vlm_provider", options.vlmProvider);
 
   const formData = new FormData();

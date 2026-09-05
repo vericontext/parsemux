@@ -1,8 +1,24 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import type { ParseResult } from "@/lib/api";
+
+// Allow standard HTML tags (like <br>) but strip unknown ones (like <pad>)
+const sanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [
+    ...(defaultSchema.tagNames ?? []),
+    "br",
+    "sup",
+    "sub",
+    "mark",
+    "del",
+    "ins",
+  ],
+};
 
 export function ResultView({
   content,
@@ -30,6 +46,7 @@ export function ResultView({
     <div className="prose-parsemux">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema]]}
         urlTransform={(url) => url}
         components={{
           img: ({ src, alt, ...props }) => (
